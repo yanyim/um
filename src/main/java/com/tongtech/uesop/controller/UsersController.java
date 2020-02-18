@@ -2,63 +2,107 @@
 
 package com.tongtech.uesop.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.tongtech.uesop.dto.*;
 import com.tongtech.uesop.dto.User;
-import com.tongtech.uesop.mapper.UmMapper;
-import com.tongtech.uesop.mapper.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.tongtech.uesop.service.DepartmentService;
+import com.tongtech.uesop.service.PermissionService;
+import com.tongtech.uesop.service.RoleService;
+import com.tongtech.uesop.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
 @RequestMapping("/um")
 public class UsersController {
 
-    @Autowired
-    private UmMapper umMapper;
 
-    @Autowired
-    private UserMapper userMapper;
+    @Resource(name = "departmentService")
+    private DepartmentService departmentService;
 
-    @Autowired
-    private DepartmentMapper departmentMapper;
+    @Resource
+    private UserService userService;
 
-    @RequestMapping(path = "/users", method = RequestMethod.GET)
-    public ListResult<List<User>> listUsers(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
-        int total = umMapper.getTotal("user");
-        List<User> users = umMapper.listUsers(page * pageSize - pageSize, page * pageSize);
-        ListResult<List<User>> responseResult = new ListResult<List<User>>();
-        responseResult.setBody(users);
-        responseResult.setTotal(total);
-        responseResult.setCurrentPage(page);
-        responseResult.setPageSize(pageSize);
-        responseResult.setState(1);
-        return responseResult;
-    }
+    @Resource(name = "roleService")
+    private RoleService roleService;
 
-    @RequestMapping(path = "/user", method = RequestMethod.POST)
-    public ResponseResult<Integer> addUser(
-            @RequestBody(required = true) User user
-    ) {
-        user.setStatus(UMStatus.VALID);
-        umMapper.addUser(
-                user.getUserName(),
-                user.getDepartment(),
-                user.getAvatarUrl(),
-                user.getUserName(),
-                user.getStatus());
+    @Resource(name = "permissionService")
+    private PermissionService permissionService;
+
+    /*
+     *
+     * 操作用户
+     *
+     * */
+    @RequestMapping(path = "/usersWithPage", method = RequestMethod.GET)
+    public ResponseResult<PageInfo<User>> selectUserswithPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "8") int pageSize) {
+        PageHelper.startPage(page, pageSize);
         ResponseResult result = new ResponseResult();
-        result.setMsg("添加成功");
+        PageInfo info = userService.selectUserswithPage(page, pageSize);
+        result.setBody(info);
+        result.setMsg("查询成功");
         result.setState(1);
         return result;
     }
 
+    @RequestMapping(path = "/usersAndFilterWithPage", method = RequestMethod.GET)
+    public ResponseResult<PageInfo<User>> selectAndfilterUserswithPage(
+            @RequestParam(value="userName", defaultValue = "")String userName,
+            @RequestParam(value="status",defaultValue = "")String status,
+            @RequestParam(value="userId",defaultValue = "")String userId,
+            @RequestParam(value="department",defaultValue = "")String department,
+            @RequestParam(value="email",defaultValue = "")String email,
+            @RequestParam(value="phone",defaultValue = "")String phone,
+            @RequestParam(value="page", defaultValue = "0") int page,
+            @RequestParam(value="pageSize", defaultValue = "8") int pageSize) {
+        PageHelper.startPage(page, pageSize);
+        User user = new User();
+        user.setUserName(userName);
+        user.setStatus(status);
+        user.setUserId(userId);
+        user.setDepartment(department);
+        user.setPhone(phone);
+        ResponseResult result = new ResponseResult();
+        PageInfo info = userService.selectByAllwithPage(user, page, pageSize);
+        result.setBody(info);
+        result.setMsg("查询成功");
+        result.setState(1);
+        return result;
+    }
 
+    @RequestMapping(path = "/user", method = RequestMethod.POST)
+    public ResponseResult<Integer> addUser(
+            @RequestBody(required = true) UserRequest userRequest
+    ) {
+        int resultStatus = userService.insert(userRequest.getUser(),userRequest.getRoles());
+        ResponseResult result = new ResponseResult();
+        result.setMsg("添加成功");
+        result.setState(resultStatus);
+        return result;
+    }
+
+    @RequestMapping(path = "/user", method = RequestMethod.DELETE)
+    public ResponseResult<Integer> removeUser(
+            @RequestBody(required = true) User user
+    ) {
+        int resultStatus = userService.deleteByPrimaryKey(user.getId());
+        ResponseResult result = new ResponseResult();
+        result.setMsg("删除成功");
+        result.setState(resultStatus);
+        return result;
+    }
+
+
+    /*
+     *   操作部门
+     * */
     @RequestMapping(path = "/departments", method = RequestMethod.GET)
-    public ListResult<List<Department>> listDepartments() {
-        List<Department> departments = departmentMapper.selectAll();
-        ListResult result = new ListResult();
+    public ResponseResult<List<Department>> listDepartments() {
+        List<Department> departments = departmentService.selectAll();
+        ResponseResult result = new ResponseResult();
         result.setBody(departments);
         result.setState(1);
         return result;
@@ -66,7 +110,7 @@ public class UsersController {
 
     @RequestMapping(path = "/department", method = RequestMethod.GET)
     public ResponseResult<Department> queryDepartment(@RequestParam(defaultValue = "1") int id) {
-        Department department = departmentMapper.selectByPrimaryKey(id);
+        Department department = departmentService.selectByPrimaryKey(id);
         ResponseResult result = new ResponseResult();
         result.setBody(department);
         result.setState(1);
@@ -77,30 +121,81 @@ public class UsersController {
     public ResponseResult<Integer> addDepartment(
             @RequestBody(required = true) Department department
     ) {
-        umMapper.addDepartment(
-                department.getDepartmentName(),
-                department.getParentDepartment());
+        int sqlResult = departmentService.insert(department);
+        System.out.println(department.getId());
         ResponseResult result = new ResponseResult();
         result.setMsg("添加成功");
+        result.setState(sqlResult);
+        return result;
+    }
+
+    /*
+     *
+     * 操作角色
+     *
+     * */
+    @RequestMapping(path = "/role/detail", method = RequestMethod.GET)
+    public ResponseResult<Role> selectRoleDetail(@RequestParam int id) {
+        Role role = roleService.selectDetailByPrimaryKey(id);
+        ResponseResult result = new ResponseResult();
+        result.setBody(role);
+        result.setMsg("查询成功");
         result.setState(1);
         return result;
     }
 
+    @RequestMapping(path = "/role/details", method = RequestMethod.GET)
+    public ResponseResult<List<Role>> selectRolesDetail(@RequestParam Integer[] ids) {
+        List<Role> roles = roleService.selectDetailByPrimaryKeys(ids);
+        ResponseResult result = new ResponseResult();
+        result.setBody(roles);
+        result.setMsg("查询成功");
+        result.setState(1);
+        return result;
+    }
+
+    @RequestMapping(path = "/roles", method = RequestMethod.GET)
+    public ResponseResult<List<Role>> selectRoles() {
+        ResponseResult result = new ResponseResult();
+        List<Role> roles = roleService.selectRoles();
+        result.setBody(roles);
+        result.setMsg("查询成功");
+        result.setState(1);
+        return result;
+    }
+
+    @RequestMapping(path = "/rolesWithPage", method = RequestMethod.GET)
+    public ResponseResult<PageInfo<User>> selectRoleswithPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "8") int pageSize) {
+        ResponseResult result = new ResponseResult();
+        PageInfo info = roleService.selectRoleswithPage(page, pageSize);
+        result.setBody(info);
+        result.setMsg("查询成功");
+        result.setState(1);
+        return result;
+    }
+
+    @RequestMapping(path = "/role", method = RequestMethod.POST)
+    public ResponseResult<PageInfo<User>> addRole(@RequestBody(required = true) RoleRequest rr) {
+        int resultCode = roleService.insert(rr.getRole(), rr.getPermissions());
+        ResponseResult result = new ResponseResult();
+        result.setMsg("创建成功");
+        result.setState(resultCode);
+        return result;
+    }
+
+    /*
+     * 操作权限
+     * */
     @RequestMapping(path = "/permission", method = RequestMethod.POST)
     public ResponseResult<Integer> addPermission(
             @RequestBody(required = true) Permission permission
     ) {
         permission.setStatus(UMStatus.VALID);
-        umMapper.addPermission(
-                permission.getPermission_name(),
-                permission.getCode(),
-                permission.getType(),
-                permission.getParent_permission(),
-                permission.getStatus(),
-                permission.getDescription());
+        permission.setType("data");
+        int resultCode = permissionService.insert(permission);
         ResponseResult result = new ResponseResult();
         result.setMsg("添加成功");
-        result.setState(1);
+        result.setState(resultCode);
         return result;
     }
 
@@ -108,17 +203,10 @@ public class UsersController {
     public ResponseResult<Integer> editPermission(
             @RequestBody(required = true) Permission permission
     ) {
-        umMapper.editPermission(
-                permission.getId(),
-                permission.getPermission_name(),
-                permission.getCode(),
-                permission.getType(),
-                permission.getParent_permission(),
-                permission.getStatus(),
-                permission.getDescription());
+        int resultCode = permissionService.updateByPrimaryKeySelective(permission);
         ResponseResult result = new ResponseResult();
         result.setMsg("修改成功");
-        result.setState(1);
+        result.setState(resultCode);
         return result;
     }
 
@@ -126,12 +214,10 @@ public class UsersController {
     public ResponseResult<Integer> changeStatusOfPermission(
             @RequestBody(required = true) Permission permission
     ) {
-        umMapper.changeStatusOfPermission(
-                permission.getId(),
-                permission.getStatus());
+        int resultCode = permissionService.updateByPrimaryKeySelective(permission);
         ResponseResult result = new ResponseResult();
         result.setMsg("修改成功");
-        result.setState(1);
+        result.setState(resultCode);
         return result;
     }
 
@@ -139,18 +225,18 @@ public class UsersController {
     public ResponseResult<Integer> deletePermission(
             @RequestBody(required = true) Permission permission
     ) {
-        umMapper.deletePermission(permission.getId());
+        int resultCode = permissionService.deleteByPrimaryKey(permission.getId());
         ResponseResult result = new ResponseResult();
         result.setMsg("删除成功");
-        result.setState(1);
+        result.setState(resultCode);
         return result;
     }
 
-    @RequestMapping(path = "/viewPermissions", method = RequestMethod.GET)
-    public ListResult<List<Permission>> listViewPermissions() {
-        List<Permission> permissions = umMapper.listViewPermissions();
-        ListResult result = new ListResult();
-        result.setBody(permissions);
+    @RequestMapping(path = "/listPermissions", method = RequestMethod.GET)
+    public ResponseResult<PageInfo<Permission>> listPermissionswithPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "8") int pageSize) {
+        PageInfo<Permission> info = permissionService.selectAllwithPage(page, pageSize);
+        ResponseResult<PageInfo<Permission>> result = new ResponseResult();
+        result.setBody(info);
         result.setMsg("添加成功");
         result.setState(1);
         return result;

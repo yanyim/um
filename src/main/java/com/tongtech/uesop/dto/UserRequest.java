@@ -3,9 +3,8 @@ package com.tongtech.uesop.dto;
 import lombok.Data;
 
 @Data
-public class UserParam {
+public class UserRequest {
+    User user;
 
-    String name;
-
-    String pwd;
+    Integer[] roles;
 }

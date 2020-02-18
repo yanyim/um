@@ -6,11 +6,12 @@
     <!--@Table department-->
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="department_name" jdbcType="VARCHAR" property="departmentName" />
+    <result column="parent_department_name" jdbcType="VARCHAR" property="parentDepartmentName" />
     <result column="parent_department" jdbcType="INTEGER" property="parentDepartment" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, department_name, parent_department
+    id, department_name, parent_department_name, parent_department
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -26,8 +27,10 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.tongtech.uesop.dto.Department" useGeneratedKeys="true">
     <!--@mbg.generated-->
-    insert into department (department_name, parent_department)
-    values (#{departmentName,jdbcType=VARCHAR}, #{parentDepartment,jdbcType=INTEGER})
+    insert into department (department_name, parent_department_name, 
+      parent_department)
+    values (#{departmentName,jdbcType=VARCHAR}, #{parentDepartmentName,jdbcType=VARCHAR}, 
+      #{parentDepartment,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.tongtech.uesop.dto.Department" useGeneratedKeys="true">
     <!--@mbg.generated-->
@@ -36,6 +39,9 @@
       <if test="departmentName != null">
         department_name,
       </if>
+      <if test="parentDepartmentName != null">
+        parent_department_name,
+      </if>
       <if test="parentDepartment != null">
         parent_department,
       </if>
@@ -43,6 +49,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="departmentName != null">
         #{departmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentDepartmentName != null">
+        #{parentDepartmentName,jdbcType=VARCHAR},
       </if>
       <if test="parentDepartment != null">
         #{parentDepartment,jdbcType=INTEGER},
@@ -56,6 +65,9 @@
       <if test="departmentName != null">
         department_name = #{departmentName,jdbcType=VARCHAR},
       </if>
+      <if test="parentDepartmentName != null">
+        parent_department_name = #{parentDepartmentName,jdbcType=VARCHAR},
+      </if>
       <if test="parentDepartment != null">
         parent_department = #{parentDepartment,jdbcType=INTEGER},
       </if>
@@ -66,9 +78,11 @@
     <!--@mbg.generated-->
     update department
     set department_name = #{departmentName,jdbcType=VARCHAR},
+      parent_department_name = #{parentDepartmentName,jdbcType=VARCHAR},
       parent_department = #{parentDepartment,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="selectAll" resultMap="BaseResultMap">select * from department</select>
-
+    <select id="selectAll" resultMap="BaseResultMap">
+      select * from department
+    </select>
 </mapper>

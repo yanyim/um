@@ -2,13 +2,19 @@ package com.tongtech.uesop.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class Role {
+    private Integer id;
 
-    private int id;
+    private String roleName;
 
-    private String role_name;
+    private Integer parentRole;
 
-    private int parent_role;
+    private String roleCode;
 
+    private String viewPermissions;
+
+    private List<Permission> permissions;
 }

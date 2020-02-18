@@ -1,9 +1,9 @@
 package com.tongtech.uesop.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tongtech.uesop.mapper.UmMapper;
 import com.tongtech.uesop.dto.UMStatus;
 import com.tongtech.uesop.dto.User;
+import com.tongtech.uesop.service.UserService;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -36,8 +37,10 @@ public class OAuthController {
     @Value("${github.secret}")
     private String githubSecret;
 
-    @Autowired
-    private UmMapper umMapper;
+
+    @Resource(name = "userService")
+    private UserService userService;
+
 
     private Map<String, String> query2obj(HttpEntity httpEntity) throws IOException {
         List<NameValuePair> query = URLEncodedUtils.parse(EntityUtils.toString(httpEntity), Charset.forName("utf-8"));
@@ -67,7 +70,7 @@ public class OAuthController {
             String personStr = EntityUtils.toString(personEntity);
             JSONObject object = JSONObject.parseObject(personStr);
             Integer user_id = (Integer) object.get("id");
-            User user = umMapper.getUser(user_id.toString());
+            User user = userService.selectwithUserId(user_id.toString());
             if (user != null) {
                 System.out.println(user);
             } else {
@@ -78,13 +81,8 @@ public class OAuthController {
                 user.setStatus(UMStatus.VALID);
                 user.setUserId(user_id.toString());
                 user.setAvatarUrl(avatar0);
-                user.setDepartment("github");
-                umMapper.addUser(
-                        user.getUserName(),
-                        user.getDepartment(),
-                        user.getAvatarUrl(),
-                        user.getUserId(),
-                        user.getStatus());
+                user.setGroup("github");
+                userService.insert(user);
             }
             response.setHeader("token","ffffff");
             response.sendRedirect("http://127.0.0.1:8000/dashboard");

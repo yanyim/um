@@ -8,5 +8,7 @@ public class Department {
 
     private String departmentName;
 
+    private String parentDepartmentName;
+
     private Integer parentDepartment;
 }

@@ -4,6 +4,8 @@ import com.tongtech.uesop.dto.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface UserMapper {
@@ -18,4 +20,10 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+
+    List<User> selectUsers();
+
+    User selectwithUserId(String id);
+
+    List<User> selectByAll(User user);
 }

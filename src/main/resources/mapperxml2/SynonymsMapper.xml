@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tongtech.uesop.mapper2.SynonymsMapper">
+  <resultMap id="BaseResultMap" type="com.tongtech.uesop.dto2.Synonyms">
+    <!--@mbg.generated-->
+    <!--@Table synonyms-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="question_name" jdbcType="VARCHAR" property="questionName" />
+    <result column="hot" jdbcType="INTEGER" property="hot" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="semantic_status" jdbcType="VARCHAR" property="semanticStatus" />
+    <result column="source" jdbcType="VARCHAR" property="source" />
+    <result column="administrative_division" jdbcType="VARCHAR" property="administrativeDivision" />
+    <result column="maintenance_agency" jdbcType="VARCHAR" property="maintenanceAgency" />
+    <result column="terminal_type" jdbcType="VARCHAR" property="terminalType" />
+    <result column="shelves_status" jdbcType="VARCHAR" property="shelvesStatus" />
+    <result column="source_type" jdbcType="VARCHAR" property="sourceType" />
+    <result column="lin_event" jdbcType="VARCHAR" property="linEvent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, question_name, hot, update_time, `status`, semantic_status, `source`, administrative_division, 
+    maintenance_agency, terminal_type, shelves_status, source_type, lin_event
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from synonyms
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!--@mbg.generated-->
+    delete from synonyms
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.tongtech.uesop.dto2.Synonyms" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into synonyms (question_name, hot, update_time, 
+      `status`, semantic_status, `source`, 
+      administrative_division, maintenance_agency, 
+      terminal_type, shelves_status, source_type, 
+      lin_event)
+    values (#{questionName,jdbcType=VARCHAR}, #{hot,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=VARCHAR}, #{semanticStatus,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, 
+      #{administrativeDivision,jdbcType=VARCHAR}, #{maintenanceAgency,jdbcType=VARCHAR}, 
+      #{terminalType,jdbcType=VARCHAR}, #{shelvesStatus,jdbcType=VARCHAR}, #{sourceType,jdbcType=VARCHAR}, 
+      #{linEvent,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.tongtech.uesop.dto2.Synonyms" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into synonyms
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="questionName != null">
+        question_name,
+      </if>
+      <if test="hot != null">
+        hot,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="semanticStatus != null">
+        semantic_status,
+      </if>
+      <if test="source != null">
+        `source`,
+      </if>
+      <if test="administrativeDivision != null">
+        administrative_division,
+      </if>
+      <if test="maintenanceAgency != null">
+        maintenance_agency,
+      </if>
+      <if test="terminalType != null">
+        terminal_type,
+      </if>
+      <if test="shelvesStatus != null">
+        shelves_status,
+      </if>
+      <if test="sourceType != null">
+        source_type,
+      </if>
+      <if test="linEvent != null">
+        lin_event,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="questionName != null">
+        #{questionName,jdbcType=VARCHAR},
+      </if>
+      <if test="hot != null">
+        #{hot,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="semanticStatus != null">
+        #{semanticStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null">
+        #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="administrativeDivision != null">
+        #{administrativeDivision,jdbcType=VARCHAR},
+      </if>
+      <if test="maintenanceAgency != null">
+        #{maintenanceAgency,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalType != null">
+        #{terminalType,jdbcType=VARCHAR},
+      </if>
+      <if test="shelvesStatus != null">
+        #{shelvesStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null">
+        #{sourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="linEvent != null">
+        #{linEvent,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tongtech.uesop.dto2.Synonyms">
+    <!--@mbg.generated-->
+    update synonyms
+    <set>
+      <if test="questionName != null">
+        question_name = #{questionName,jdbcType=VARCHAR},
+      </if>
+      <if test="hot != null">
+        hot = #{hot,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="semanticStatus != null">
+        semantic_status = #{semanticStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null">
+        `source` = #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="administrativeDivision != null">
+        administrative_division = #{administrativeDivision,jdbcType=VARCHAR},
+      </if>
+      <if test="maintenanceAgency != null">
+        maintenance_agency = #{maintenanceAgency,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalType != null">
+        terminal_type = #{terminalType,jdbcType=VARCHAR},
+      </if>
+      <if test="shelvesStatus != null">
+        shelves_status = #{shelvesStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null">
+        source_type = #{sourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="linEvent != null">
+        lin_event = #{linEvent,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tongtech.uesop.dto2.Synonyms">
+    <!--@mbg.generated-->
+    update synonyms
+    set question_name = #{questionName,jdbcType=VARCHAR},
+      hot = #{hot,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      `status` = #{status,jdbcType=VARCHAR},
+      semantic_status = #{semanticStatus,jdbcType=VARCHAR},
+      `source` = #{source,jdbcType=VARCHAR},
+      administrative_division = #{administrativeDivision,jdbcType=VARCHAR},
+      maintenance_agency = #{maintenanceAgency,jdbcType=VARCHAR},
+      terminal_type = #{terminalType,jdbcType=VARCHAR},
+      shelves_status = #{shelvesStatus,jdbcType=VARCHAR},
+      source_type = #{sourceType,jdbcType=VARCHAR},
+      lin_event = #{linEvent,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

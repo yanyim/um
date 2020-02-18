@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tongtech.uesop.mapper.RoleMapper">
+    <resultMap id="BaseResultMap" type="com.tongtech.uesop.dto.Role">
+        <!--@mbg.generated-->
+        <!--@Table role-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="parent_role" jdbcType="INTEGER" property="parentRole"/>
+        <result column="role_code" jdbcType="VARCHAR" property="roleCode"/>
+        <result column="view_permissions" jdbcType="VARCHAR" property="viewPermissions"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, role_name, parent_role, role_code, view_permissions
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from role
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from role
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.tongtech.uesop.dto.Role"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into role (role_name, parent_role, role_code,
+        view_permissions)
+        values (#{roleName,jdbcType=VARCHAR}, #{parentRole,jdbcType=INTEGER}, #{roleCode,jdbcType=VARCHAR},
+        #{viewPermissions,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.tongtech.uesop.dto.Role"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleName != null">
+                role_name,
+            </if>
+            <if test="parentRole != null">
+                parent_role,
+            </if>
+            <if test="roleCode != null">
+                role_code,
+            </if>
+            <if test="viewPermissions != null">
+                view_permissions,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleName != null">
+                #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="parentRole != null">
+                #{parentRole,jdbcType=INTEGER},
+            </if>
+            <if test="roleCode != null">
+                #{roleCode,jdbcType=VARCHAR},
+            </if>
+            <if test="viewPermissions != null">
+                #{viewPermissions,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tongtech.uesop.dto.Role">
+        <!--@mbg.generated-->
+        update role
+        <set>
+            <if test="roleName != null">
+                role_name = #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="parentRole != null">
+                parent_role = #{parentRole,jdbcType=INTEGER},
+            </if>
+            <if test="roleCode != null">
+                role_code = #{roleCode,jdbcType=VARCHAR},
+            </if>
+            <if test="viewPermissions != null">
+                view_permissions = #{viewPermissions,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.tongtech.uesop.dto.Role">
+        <!--@mbg.generated-->
+        update role
+        set role_name = #{roleName,jdbcType=VARCHAR},
+        parent_role = #{parentRole,jdbcType=INTEGER},
+        role_code = #{roleCode,jdbcType=VARCHAR},
+        view_permissions = #{viewPermissions,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="selectRoles" resultMap="BaseResultMap">
+        select *
+        from role
+    </select>
+
+</mapper>

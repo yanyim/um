@@ -4,19 +4,17 @@ import lombok.Data;
 
 @Data
 public class Permission {
-
-    private int id;
+    private Integer id;
 
     private String type;
 
     private String description;
 
-    private String permission_name;
-
-    private int parent_permission;
+    private String permissionName;
 
     private String code;
 
     private String status;
 
+    private String rule;
 }

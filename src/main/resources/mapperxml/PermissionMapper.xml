@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tongtech.uesop.mapper.PermissionMapper">
+  <resultMap id="BaseResultMap" type="com.tongtech.uesop.dto.Permission">
+    <!--@mbg.generated-->
+    <!--@Table permission-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="rule" jdbcType="VARCHAR" property="rule" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, `type`, description, permission_name, code, `status`, `rule`
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from permission
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!--@mbg.generated-->
+    delete from permission
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.tongtech.uesop.dto.Permission" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into permission (`type`, description, permission_name, 
+      code, `status`, `rule`)
+    values (#{type,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{permissionName,jdbcType=VARCHAR}, 
+      #{code,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{rule,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.tongtech.uesop.dto.Permission" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="type != null">
+        `type`,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="permissionName != null">
+        permission_name,
+      </if>
+      <if test="code != null">
+        code,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="rule != null">
+        `rule`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionName != null">
+        #{permissionName,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="rule != null">
+        #{rule,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tongtech.uesop.dto.Permission">
+    <!--@mbg.generated-->
+    update permission
+    <set>
+      <if test="type != null">
+        `type` = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionName != null">
+        permission_name = #{permissionName,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="rule != null">
+        `rule` = #{rule,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tongtech.uesop.dto.Permission">
+    <!--@mbg.generated-->
+    update permission
+    set `type` = #{type,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      permission_name = #{permissionName,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=VARCHAR},
+      `rule` = #{rule,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select * from permission
+  </select>
+  <select id="selectByRoleKey" resultMap="BaseResultMap">
+    select
+      p.id, p.type, p.description, p.permission_name, p.code, p.status, p.rule
+    from permission  p
+           left join role_permission_relation rp on rp.prmission_id= p.id
+           left join role r on
+      rp.role_id=r.id
+    where r.id = #{roleId, jdbcType=INTEGER}
+  </select>
+</mapper>
