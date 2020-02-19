@@ -1,7 +1,6 @@
 package com.tongtech.uesop.mapper;
 
 import com.tongtech.uesop.dto.Permission;
-import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +24,6 @@ public interface PermissionMapper {
     List<Permission> selectAll();
 
     List<Permission> selectByRoleKey(Integer roleId);
+
+    List<Permission> selectByLinkId(Integer departmentId);
 }

@@ -10,6 +10,8 @@ import com.tongtech.uesop.service.DepartmentService;
 import com.tongtech.uesop.service.PermissionService;
 import com.tongtech.uesop.service.RoleService;
 import com.tongtech.uesop.service.UserService;
+import io.swagger.models.auth.In;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -50,14 +52,14 @@ public class UsersController {
 
     @RequestMapping(path = "/usersAndFilterWithPage", method = RequestMethod.GET)
     public ResponseResult<PageInfo<User>> selectAndfilterUserswithPage(
-            @RequestParam(value="userName", defaultValue = "")String userName,
-            @RequestParam(value="status",defaultValue = "")String status,
-            @RequestParam(value="userId",defaultValue = "")String userId,
-            @RequestParam(value="department",defaultValue = "")String department,
-            @RequestParam(value="email",defaultValue = "")String email,
-            @RequestParam(value="phone",defaultValue = "")String phone,
-            @RequestParam(value="page", defaultValue = "0") int page,
-            @RequestParam(value="pageSize", defaultValue = "8") int pageSize) {
+            @RequestParam(value = "userName", defaultValue = "") String userName,
+            @RequestParam(value = "status", defaultValue = "") String status,
+            @RequestParam(value = "userId", defaultValue = "") String userId,
+            @RequestParam(value = "department", defaultValue = "") String department,
+            @RequestParam(value = "email", defaultValue = "") String email,
+            @RequestParam(value = "phone", defaultValue = "") String phone,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "pageSize", defaultValue = "8") int pageSize) {
         PageHelper.startPage(page, pageSize);
         User user = new User();
         user.setUserName(userName);
@@ -77,7 +79,7 @@ public class UsersController {
     public ResponseResult<Integer> addUser(
             @RequestBody(required = true) UserRequest userRequest
     ) {
-        int resultStatus = userService.insert(userRequest.getUser(),userRequest.getRoles());
+        int resultStatus = userService.insert(userRequest.getUser(), userRequest.getRoles());
         ResponseResult result = new ResponseResult();
         result.setMsg("添加成功");
         result.setState(resultStatus);
@@ -117,12 +119,29 @@ public class UsersController {
         return result;
     }
 
+    @Transactional
     @RequestMapping(path = "/department", method = RequestMethod.POST)
     public ResponseResult<Integer> addDepartment(
-            @RequestBody(required = true) Department department
+            @RequestBody(required = true) DepartmentRequest departmentRequest
     ) {
+        Department department = departmentRequest.getDepartment();
+        Permission permission = departmentRequest.getPermission();
+        permission.setType("data");
+        String parentStr = department.getParentDepartmentName() == null? "ROOT":department.getParentDepartmentName();
+        permission.setPermissionName(parentStr+"." + department.getDepartmentName());
+
+        permission.setStatus(UMStatus.VALID);
+        permission.setDescription("部门" + department.getDepartmentName() + "默认权限");
+        permission.setLock(1);
+        permissionService.insert(permission);
+        Role role = departmentRequest.getRole();
+        role.setRoleName(parentStr +"."+ department.getDepartmentName());
+        Integer[] permissions = {permission.getId()};
+        int roleId = roleService.insert(role, permissions);
+        department.setRoleId(roleId);
         int sqlResult = departmentService.insert(department);
-        System.out.println(department.getId());
+        permission.setLinkDepartment(department.getId());
+        permissionService.updateByPrimaryKey(permission);
         ResponseResult result = new ResponseResult();
         result.setMsg("添加成功");
         result.setState(sqlResult);
@@ -176,10 +195,10 @@ public class UsersController {
 
     @RequestMapping(path = "/role", method = RequestMethod.POST)
     public ResponseResult<PageInfo<User>> addRole(@RequestBody(required = true) RoleRequest rr) {
-        int resultCode = roleService.insert(rr.getRole(), rr.getPermissions());
+        int roleId = roleService.insert(rr.getRole(), rr.getPermissions());
         ResponseResult result = new ResponseResult();
         result.setMsg("创建成功");
-        result.setState(resultCode);
+        result.setState(1);
         return result;
     }
 
@@ -196,6 +215,18 @@ public class UsersController {
         ResponseResult result = new ResponseResult();
         result.setMsg("添加成功");
         result.setState(resultCode);
+        return result;
+    }
+
+    @RequestMapping(path = "/permissionWithLinkDepartmentId", method = RequestMethod.GET)
+    public ResponseResult<Integer> queryPermissionWithLinkDepartmentId(
+            @RequestParam(required = true) Integer departmentId
+    ) {
+        List<Permission> permissions = permissionService.selectByLinkId(departmentId);
+        ResponseResult result = new ResponseResult();
+        result.setBody(permissions);
+        result.setMsg("添加成功");
+        result.setState(1);
         return result;
     }
 

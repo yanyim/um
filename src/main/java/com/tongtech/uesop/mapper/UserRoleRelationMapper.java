@@ -2,8 +2,10 @@ package com.tongtech.uesop.mapper;
 
 import com.tongtech.uesop.dto.UserRoleRelation;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 @Mapper
+@Repository
 public interface UserRoleRelationMapper {
     int deleteByPrimaryKey(Integer urId);
 

@@ -42,7 +42,7 @@ public class RoleService {
             rp.setRoleId(record.getId());
             rolePermissionRelationMapper.insert(rp);
         }
-        return 1;
+        return record.getId();
     }
 
     public int insertSelective(Role record) {

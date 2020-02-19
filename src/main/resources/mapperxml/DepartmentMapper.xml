@@ -8,10 +8,14 @@
     <result column="department_name" jdbcType="VARCHAR" property="departmentName" />
     <result column="parent_department_name" jdbcType="VARCHAR" property="parentDepartmentName" />
     <result column="parent_department" jdbcType="INTEGER" property="parentDepartment" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, department_name, parent_department_name, parent_department
+    id, department_name, parent_department_name, parent_department, description, role_id, 
+    `type`
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -28,9 +32,11 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.tongtech.uesop.dto.Department" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into department (department_name, parent_department_name, 
-      parent_department)
+      parent_department, description, role_id, 
+      `type`)
     values (#{departmentName,jdbcType=VARCHAR}, #{parentDepartmentName,jdbcType=VARCHAR}, 
-      #{parentDepartment,jdbcType=INTEGER})
+      #{parentDepartment,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{roleId,jdbcType=INTEGER}, 
+      #{type,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.tongtech.uesop.dto.Department" useGeneratedKeys="true">
     <!--@mbg.generated-->
@@ -45,6 +51,15 @@
       <if test="parentDepartment != null">
         parent_department,
       </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="type != null">
+        `type`,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="departmentName != null">
@@ -55,6 +70,15 @@
       </if>
       <if test="parentDepartment != null">
         #{parentDepartment,jdbcType=INTEGER},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -71,6 +95,15 @@
       <if test="parentDepartment != null">
         parent_department = #{parentDepartment,jdbcType=INTEGER},
       </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        `type` = #{type,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -79,7 +112,10 @@
     update department
     set department_name = #{departmentName,jdbcType=VARCHAR},
       parent_department_name = #{parentDepartmentName,jdbcType=VARCHAR},
-      parent_department = #{parentDepartment,jdbcType=INTEGER}
+      parent_department = #{parentDepartment,jdbcType=INTEGER},
+      description = #{description,jdbcType=VARCHAR},
+      role_id = #{roleId,jdbcType=INTEGER},
+      `type` = #{type,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
     <select id="selectAll" resultMap="BaseResultMap">

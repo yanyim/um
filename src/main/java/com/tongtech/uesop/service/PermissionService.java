@@ -49,4 +49,11 @@ public class PermissionService {
     public List<Permission> selectByRoleKey(Integer roleId) {
         return permissionMapper.selectByRoleKey(roleId);
     }
+
+    public List<Permission> selectByLinkId(Integer departmentId) {
+        return permissionMapper.selectByLinkId(departmentId);
+    }
 }
+
+
+

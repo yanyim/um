@@ -11,4 +11,10 @@ public class Department {
     private String parentDepartmentName;
 
     private Integer parentDepartment;
+
+    private String description;
+
+    private Integer roleId;
+
+    private String type;
 }

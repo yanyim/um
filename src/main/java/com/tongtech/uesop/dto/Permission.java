@@ -17,4 +17,8 @@ public class Permission {
     private String status;
 
     private String rule;
+
+    private Integer lock;
+
+    private Integer linkDepartment;
 }
